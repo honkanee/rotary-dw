@@ -47,10 +47,10 @@ struct SimulationParameters {
 
     int n_y_eta = 1000;
     bool write_eta_to_file = true;
+    int random_seed = 0;
 
     // RUNOPT
     bool ramped_field = false;
-    bool print_all = false;
     bool file_partioning = false;
 
     // ===== Public read-only accessors =====
@@ -71,6 +71,24 @@ struct SimulationParameters {
 
     std::cout << "===== Simulation Parameters (SI units) =====\n";
 
+    // Simulation control
+    std::cout << "N: " << N << "\n";
+    std::cout << "  -> L: " << N*dx*D_scale*1e6 << " µm\n";
+    std::cout << "nsteps: " << nsteps << "\n";
+    std::cout << "  -> t: " << nsteps*dt*time_scale()*1e6 << " µs\n";
+
+    // Field
+    double field_scale = mu0 * Ms;
+    std::cout << "Bext (T): " << Bext * field_scale << "\n";
+    std::cout << "sigma (T): " << sigma * field_scale << "\n";
+
+    std::cout << "print_frec: " << print_frec << "\n";
+    std::cout << "resolution_along_x: " << resolution_along_x << "\n";
+
+    // Material
+    std::cout << "dmi_const (J/m²): "
+              << dmi_const * (Ms * Ms * mu0 * D_scale) << "\n\n";
+
     // Length scale
     std::cout << "D_scale (m): " << D_scale << "\n";
 
@@ -83,30 +101,18 @@ struct SimulationParameters {
     double time_scale = 1.0 / (gamma_e * mu0 * Ms);
     std::cout << "dt (s): " << dt * time_scale << "\n";
 
-    // Field
-    double field_scale = mu0 * Ms;
-    std::cout << "Bext (T): " << Bext * field_scale << "\n";
-    std::cout << "sigma (T): " << sigma * field_scale << "\n";
-
-    // Material
-    std::cout << "dmi_const (SI): "
-              << dmi_const * (Ms * Ms * mu0 * D_scale) << "\n";
-
     // Dimensionless (still useful to see)
     std::cout << "alpha: " << alpha << "\n";
     std::cout << "K (dimensionless): " << K << "\n";
     std::cout << "Nn: " << Nn << "\n";
 
-    // Simulation control
-    std::cout << "N: " << N << "\n";
-    std::cout << "nsteps: " << nsteps << "\n";
-    std::cout << "print_frec: " << print_frec << "\n";
-    std::cout << "resolution_along_x: " << resolution_along_x << "\n";
+    std::cout << "n_y_eta: " << n_y_eta << "\n";
+    std::cout << "       = " << n_y_eta*dx*D_scale*1e6 << " µm\n";
+    std::cout << "random_seed: " << random_seed << "\n";
 
-    std::cout << "write_eta_to_file:" << write_eta_to_file << "\n";
+    std::cout << "write_eta_to_file: " << write_eta_to_file << "\n";
 
     std::cout << "ramped_field: " << ramped_field << "\n";
-    std::cout << "print_all: " << print_all << "\n";
 
     std::cout << "===========================================\n";
 };

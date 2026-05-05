@@ -106,12 +106,12 @@ void gaussian_filter_fft(RealView2D input, RealView2D output,
 }
 
 // ---------------- RANDOM FIELD ----------------
-void fill_random(RealView2D field)
+void fill_random(RealView2D field, int seed)
 {
     int Nx = field.extent(0);
     int Ny = field.extent(1);
 
-    Kokkos::Random_XorShift64_Pool<> pool(12345);
+    Kokkos::Random_XorShift64_Pool<> pool(seed);
 
     Kokkos::parallel_for("init_random",
         Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0,0},{Nx,Ny}),
@@ -155,7 +155,7 @@ void write_eta_field_to_file(const RealView2D field,
             H5::PredType::NATIVE_DOUBLE
         );
 
-        std::cout << "Wrote HDF5 (H5Cpp): " << filename << std::endl;
+        std::cout << "Wrote HDF5: " << filename << std::endl;
     }
     catch (H5::Exception& err) {
         err.printErrorStack();
@@ -171,11 +171,12 @@ ViewDoubleMatrixType make_eta_matrix(const SimulationParameters& p) {
     double xi = p.xi;
     double dx = p.dx;
     bool write_to_file = p.write_eta_to_file;
+    int seed = p.random_seed;
 
     RealView2D random_field("random_matrix", Nx, Ny);
     RealView2D filtered("eta_matrix", Nx, Ny);
 
-    fill_random(random_field);
+    fill_random(random_field, seed);
     gaussian_filter_fft(random_field, filtered, sigma, xi, dx);
 
     if (write_to_file) {

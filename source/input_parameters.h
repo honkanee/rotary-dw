@@ -29,10 +29,10 @@ struct InputParameters {
 
     int n_y_eta = 0;
     bool write_eta_to_file = false;
+    int random_seed = 0;
 
     // RUNOPT
     bool ramped_field = false;
-    bool print_all = false;
 };
 
 #endif

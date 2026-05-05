@@ -69,6 +69,7 @@ InputParameters parse_input(const std::string& filename) {
             else if (key == "Delta") ss >> p.Delta;
             else if (key == "write_eta_to_file") p.write_eta_to_file = to_bool(value);
             else if (key == "n_y_eta") ss >> p.n_y_eta;
+            else if (key == "random_seed") ss >> p.random_seed;
             else if (key == "calc_v_frec") ss >> p.calc_v_frec;
         } else {
             // RUNOPT parsing: <KEY> = VALUE
@@ -83,7 +84,6 @@ InputParameters parse_input(const std::string& filename) {
             key.erase(std::remove(key.begin(), key.end(), '>'), key.end());
 
             if (key == "RAMPED_FIELD") p.ramped_field = to_bool(value);
-            else if (key == "PRINT_ALL") p.print_all = to_bool(value);
         }
     }
 

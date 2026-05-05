@@ -7,9 +7,12 @@
 #include <Kokkos_Complex.hpp>
 
 using Complex = Kokkos::complex<double>;
-using ViewDoubleVectorType = Kokkos::View<double*>;
-using ViewDoubleMatrixType = Kokkos::View<double**>;
-using ViewComplexVectorType = Kokkos::View<Complex*>;
+using Device = Kokkos::DefaultExecutionSpace;
+using MemorySpace = Device::memory_space;
+
+using ViewDoubleVectorType = Kokkos::View<double*, MemorySpace>;
+using ViewDoubleMatrixType = Kokkos::View<double**, MemorySpace>;
+using ViewComplexVectorType = Kokkos::View<Complex*, MemorySpace>;
 
 // ----------------------
 // Simulation state
@@ -28,16 +31,14 @@ struct SimulationState {
 
 
 template<typename ViewType>
-Kokkos::View<typename ViewType::value_type*, Kokkos::SharedSpace>
+ViewComplexVectorType
 spatial_average(const ViewType& input, int resolution) {
-
-    using Complex = typename ViewType::value_type;
 
     int N = input.extent(0);
     int Nbins = resolution;
     int bin_size = N/resolution;
 
-    Kokkos::View<Complex*, Kokkos::SharedSpace> output("avg", Nbins);
+    ViewComplexVectorType output("avg", Nbins);
 
     Kokkos::parallel_for("spatial_average", Nbins, KOKKOS_LAMBDA(int i) {
         Complex sum = Complex(0.0, 0.0);

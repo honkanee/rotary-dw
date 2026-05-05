@@ -25,7 +25,7 @@ void HDF5Writer::make_output_file()
             }
             else
             {
-                output_file = H5::H5File(h5_directory+"out.hdf5", H5F_ACC_TRUNC);
+                output_file = H5::H5File(h5_directory+"out.h5", H5F_ACC_TRUNC);
             }
 
             // Add attributes to the group
@@ -90,6 +90,13 @@ void HDF5Writer::make_output_file()
             H5::DSetCreatPropList createParams_v_mean;
             createParams_v_mean.setChunk(1, dims_v_mean);
             v_mean_dataset = output_file.createDataSet("v_mean", H5::PredType::NATIVE_DOUBLE, *dataspace_v_mean, createParams_v_mean);
+
+            H5::Attribute attribute_v_unit = v_mean_dataset.createAttribute("unit", attr_type, attribute_dataspace);
+            attribute_v_unit.write(attr_type, "m/s");
+
+            double dt_v_mean_ns = p.calc_v_frec*p.dt_SI()*1e9;
+            H5::Attribute attribute_dt_v = v_mean_dataset.createAttribute("dt_ns", H5::PredType::NATIVE_DOUBLE, attribute_dataspace);
+            attribute_dt_v.write(H5::PredType::NATIVE_DOUBLE, &dt_v_mean_ns);
 
             rows = 0;
 

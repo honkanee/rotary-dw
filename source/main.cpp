@@ -18,7 +18,7 @@ using high_res_clock = std::chrono::high_resolution_clock;
 
 int main(int argc, char* argv[])
 {
-    InputParameters in = parse_input("inputcard");
+    InputParameters in = parse_input("input.conf");
     SimulationParameters p = build_simulation_parameters(in);
     p.print_SI();
 
@@ -47,13 +47,16 @@ int main(int argc, char* argv[])
 
         if (step_idx % p.print_frec == 0) {
             auto t_io0 = high_res_clock::now();
-            std::cout << step_idx << std::endl;
             writer.write(step_idx);
             Kokkos::fence();
             state.v_idx = 0;
 
             auto t_io1 = high_res_clock::now();
             io_time += std::chrono::duration<double>(t_io1 - t_io0).count();
+        }
+
+        if (step_idx*10 % p.nsteps == 0) {
+            std::cout << round(100*step_idx / p.nsteps) << " %\n";
         }
     }
     writer.close();

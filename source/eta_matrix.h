@@ -9,7 +9,7 @@
 #include "state.h"
 
 // ---------------- TYPES ----------------
-using RealView2D = Kokkos::View<double**, Kokkos::LayoutRight>;
+using RealView2D = Kokkos::View<double**, Kokkos::LayoutRight, MemorySpace>;
 using HostRealView2D = Kokkos::View<double**, Kokkos::LayoutRight, Kokkos::HostSpace>;
 
 double compute_variance(RealView2D field);
@@ -19,7 +19,7 @@ void gaussian_filter_fft(RealView2D input, RealView2D output,
                          double sigma, double xi, double dx);
 
 // ---------------- RANDOM FIELD ----------------
-void fill_random(RealView2D field);
+void fill_random(RealView2D field, int seed);
 
 void write_eta_field_to_file(const RealView2D field,
                   const std::string& filename,

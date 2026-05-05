@@ -37,10 +37,10 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
     p.calc_v_frec = in.calc_v_frec;
 
     p.ramped_field = in.ramped_field;
-    p.print_all = in.print_all;
 
     p.n_y_eta = in.n_y_eta;
     p.write_eta_to_file = in.write_eta_to_file;
+    p.random_seed = in.random_seed;
 
     // Private parts
     p.D_scale = D;
