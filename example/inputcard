@@ -1,0 +1,26 @@
+N = 100000 # Number of grid points in x direction
+nsteps = 10000 # Number of iteration steps
+B_ext = -2.22 # External field [mT]
+dmi_const = 0.00 # DMI constant [J/m²]
+
+dx = 6 # Discretization length along x direction [nm]
+dt = 0.0025 # Discretization time [ns]
+
+xi = 20 # [nm]
+sigma = 7 # [mT]
+
+Ms = 9.1e5
+Ku = 8.4e5
+Aex = 1.4e-11
+alpha = 0.27
+
+print_frec = 1000
+resolution_along_x = 1000
+calc_v_frec = 100
+
+n_y_eta = 1000
+write_eta_to_file = F
+
+RUNOPT
+<RAMPED_FIELD> = F # Not implemented yet
+<FILE_PARTIONING> = F # Not implemented yet
