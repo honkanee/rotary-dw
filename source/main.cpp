@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <iostream>
 #include <chrono>
+#include <filesystem>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Complex.hpp>
@@ -27,6 +28,9 @@ int main(int argc, char* argv[])
 
     SimulationState state = SimulationState(p.N, p.Bext, int(p.print_frec/p.calc_v_frec));
     std::string out_dir = "./out/";
+    if (!std::filesystem::exists(out_dir)) {
+    std::filesystem::create_directories(out_dir);
+    }
     HDF5Writer writer(state, p, out_dir);
     writer.make_output_file();
 

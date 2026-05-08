@@ -6,6 +6,7 @@
 
 #include <Kokkos_Complex.hpp>
 
+#include "state.h"
 #include "input_parameters.h"
 
 using Complex = Kokkos::complex<double>;

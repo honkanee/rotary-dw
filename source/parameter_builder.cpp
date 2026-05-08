@@ -2,8 +2,7 @@
 
 #include "parameter_builder.h"
 #include "input_parameters.h"
-
-using Complex = Kokkos::complex<double>;
+#include "state.h"
 
 // Physical constants
 const double gamma_e = 1.76e11;

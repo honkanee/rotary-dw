@@ -3,6 +3,8 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <unordered_set>
+#include <vector>
 
 // Helper: trim whitespace
 std::string trim(const std::string& s) {
@@ -15,6 +17,30 @@ std::string trim(const std::string& s) {
 bool to_bool(const std::string& val) {
     return (val == "T" || val == "true" || val == "1");
 }
+
+std::vector<std::string> required_keys = {
+    "N",
+    "nsteps",
+    "B_ext",
+    "dmi_const",
+    "dx",
+    "dt",
+    "print_frec",
+    "resolution_along_x",
+    "Ms",
+    "Ku",
+    "Aex",
+    "alpha",
+    "sigma",
+    "xi",
+    "Delta",
+    "write_eta_to_file",
+    "n_y_eta",
+    "random_seed",
+    "calc_v_frec"
+};
+
+std::unordered_set<std::string> found_keys;
 
 InputParameters parse_input(const std::string& filename) {
     InputParameters p;
@@ -71,6 +97,9 @@ InputParameters parse_input(const std::string& filename) {
             else if (key == "n_y_eta") ss >> p.n_y_eta;
             else if (key == "random_seed") ss >> p.random_seed;
             else if (key == "calc_v_frec") ss >> p.calc_v_frec;
+
+            // Mark parameter as found
+            found_keys.insert(key);
         } else {
             // RUNOPT parsing: <KEY> = VALUE
             size_t eq_pos = line.find('=');
@@ -85,6 +114,19 @@ InputParameters parse_input(const std::string& filename) {
 
             if (key == "RAMPED_FIELD") p.ramped_field = to_bool(value);
         }
+    }
+
+    bool missing_param = false;
+
+    for (const auto& req : required_keys) {
+        if (found_keys.find(req) == found_keys.end()) {
+            std::cerr << "Missing required parameter: " << req << std::endl;
+            missing_param = true;
+        }
+    }
+
+    if (missing_param) {
+        std::exit(EXIT_FAILURE);
     }
 
     return p;
