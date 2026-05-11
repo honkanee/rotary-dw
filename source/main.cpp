@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
 
     ViewDoubleMatrixType eta_matrix = make_eta_matrix(p);
 
-    double compute_time = 0.0;
-    double io_time = 0.0;
+    Real compute_time = 0.0;
+    Real io_time = 0.0;
 
     for (int step_idx = 0; step_idx < p.nsteps; ++step_idx) {
         auto t0 = high_res_clock::now();
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
             calc_v(state, p);
         }
         auto t1 = high_res_clock::now();
-        compute_time += std::chrono::duration<double>(t1 - t0).count();
+        compute_time += std::chrono::duration<Real>(t1 - t0).count();
 
         if (step_idx % p.print_frec == 0) {
             auto t_io0 = high_res_clock::now();
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
             state.v_idx = 0;
 
             auto t_io1 = high_res_clock::now();
-            io_time += std::chrono::duration<double>(t_io1 - t_io0).count();
+            io_time += std::chrono::duration<Real>(t_io1 - t_io0).count();
         }
 
         if (step_idx*10 % p.nsteps == 0) {

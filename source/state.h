@@ -1,17 +1,21 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "simulation_parameters.h"
-
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Complex.hpp>
 
-using Complex = Kokkos::complex<double>;
+#ifdef USE_FP32
+using Real = float;
+#else
+using Real = double;
+#endif
+
+using Complex = Kokkos::complex<Real>;
 using Device = Kokkos::DefaultExecutionSpace;
 using MemorySpace = Device::memory_space;
 
-using ViewDoubleVectorType = Kokkos::View<double*, MemorySpace>;
-using ViewDoubleMatrixType = Kokkos::View<double**, MemorySpace>;
+using ViewDoubleVectorType = Kokkos::View<Real*, MemorySpace>;
+using ViewDoubleMatrixType = Kokkos::View<Real**, MemorySpace>;
 using ViewComplexVectorType = Kokkos::View<Complex*, MemorySpace>;
 
 // ----------------------
@@ -22,11 +26,11 @@ struct SimulationState {
     ViewDoubleVectorType B_vector;
     ViewDoubleVectorType v_mean_vector;
     int N;
-    double Bext;
-    double old_position;
+    Real Bext;
+    Real old_position;
     int v_idx;
 
-    SimulationState(int N_, double Bext, int dim_v);
+    SimulationState(int N_, Real Bext, int dim_v);
 };
 
 
@@ -47,7 +51,7 @@ spatial_average(const ViewType& input, int resolution) {
             sum += input(i * bin_size + j);
         }
 
-        output(i) = sum / static_cast<double>(bin_size);
+        output(i) = sum / static_cast<Real>(bin_size);
     });
 
     return output;

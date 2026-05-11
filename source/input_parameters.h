@@ -3,23 +3,25 @@
 
 #include <string>
 
+#include "state.h"
+
 struct InputParameters {
     int N = 0;
     int nsteps = 0;
-    double B_ext = 0.0;
-    double dmi_const = 0.0;
+    Real B_ext = 0.0;
+    Real dmi_const = 0.0;
 
-    double dx = 0.0;
-    double dt = 0.0;
+    Real dx = 0.0;
+    Real dt = 0.0;
 
-    double alpha = 0.0;
-    double Ms = 0.0;
-    double Aex = 0.0;
-    double Ku = 0.0;
-    double Delta = 0.5e-9;
-    double xi = 0.0;
+    Real alpha = 0.0;
+    Real Ms = 0.0;
+    Real Aex = 0.0;
+    Real Ku = 0.0;
+    Real Delta = 0.5e-9;
+    Real xi = 0.0;
     
-    double sigma = 0.0;
+    Real sigma = 0.0;
 
     int calc_v_frec = 100;
 

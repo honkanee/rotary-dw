@@ -13,41 +13,41 @@ using RealView2D = Kokkos::View<double**, Kokkos::LayoutRight>;
 using HostRealView2D = Kokkos::View<double**, Kokkos::LayoutRight, Kokkos::HostSpace>;
 
 // ---------------- STATISTICS ----------------
-double compute_variance(RealView2D field)
+Real compute_variance(RealView2D field)
 {
     int Nx = field.extent(0);
     int Ny = field.extent(1);
 
-    double sum = 0.0;
-    double sum2 = 0.0;
+    Real sum = 0.0;
+    Real sum2 = 0.0;
 
     Kokkos::parallel_reduce("variance",
         Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0,0},{Nx,Ny}),
-        KOKKOS_LAMBDA(int i, int j, double& lsum) {
+        KOKKOS_LAMBDA(int i, int j, Real& lsum) {
             lsum += field(i,j);
         }, sum);
 
     Kokkos::parallel_reduce("variance2",
         Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0,0},{Nx,Ny}),
-        KOKKOS_LAMBDA(int i, int j, double& lsum2) {
+        KOKKOS_LAMBDA(int i, int j, Real& lsum2) {
             lsum2 += field(i,j) * field(i,j);
         }, sum2);
 
-    double N = Nx * Ny;
-    double mean = sum / N;
+    Real N = Nx * Ny;
+    Real mean = sum / N;
     return sum2 / N - mean * mean;
 }
 
 // ---------------- FFT FILTER ----------------
 void gaussian_filter_fft(RealView2D input, RealView2D output,
-                         double sigma, double xi, double dx)
+                         Real sigma, Real xi, Real dx)
 {
     int Nx = input.extent(0);
     int Ny = input.extent(1);
 
 
-    double Lx = Nx * dx;
-    double Ly = Ny * dx;
+    Real Lx = Nx * dx;
+    Real Ly = Ny * dx;
 
 
     HostRealView2D h_input = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), input);
@@ -70,13 +70,13 @@ void gaussian_filter_fft(RealView2D input, RealView2D output,
 
     for (int i = 0; i < Nx; i++) {
         int ki = (i <= Nx/2) ? i : i - Nx;
-        double kx = 2.0 * M_PI * ki/Lx;
+        Real kx = 2.0 * M_PI * ki/Lx;
 
         for (int j = 0; j < Nyc; j++) {
-            double ky = 2.0 * M_PI * j/Ly;
+            Real ky = 2.0 * M_PI * j/Ly;
 
-            double k2 = kx*kx + ky*ky;
-            double factor = std::exp(-xi*xi*k2/8);
+            Real k2 = kx*kx + ky*ky;
+            Real factor = std::exp(-xi*xi*k2/8);
 
             int idx = i * Nyc + j;
             fft_data[idx][0] *= factor;
@@ -88,8 +88,8 @@ void gaussian_filter_fft(RealView2D input, RealView2D output,
 
     Kokkos::deep_copy(output, h_output);
 
-    double var = compute_variance(output);
-    double rescale_factor = sigma/sqrt(var);
+    Real var = compute_variance(output);
+    Real rescale_factor = sigma/sqrt(var);
 
     Kokkos::parallel_for(
         "rescale",
@@ -167,9 +167,9 @@ ViewDoubleMatrixType make_eta_matrix(const SimulationParameters& p) {
 
     int Nx = p.N;
     int Ny = p.n_y_eta; // To be changed!
-    double sigma = p.sigma;
-    double xi = p.xi;
-    double dx = p.dx;
+    Real sigma = p.sigma;
+    Real xi = p.xi;
+    Real dx = p.dx;
     bool write_to_file = p.write_eta_to_file;
     int seed = p.random_seed;
 
@@ -195,11 +195,11 @@ void update_B_vector(const ViewDoubleMatrixType eta_matrix,
         "make_B_vector",
         state.N,
         KOKKOS_LAMBDA(int i) {
-            double y = state.dw(i).real();
-            double a = y - int(y);
+            Real y = state.dw(i).real();
+            Real a = y - int(y);
             int yi1 = int(y)%eta_matrix.extent(1);
             int yi2 = (int(y)+1)%eta_matrix.extent(1);
-            double interpolated_from_eta = (a*eta_matrix(i,yi2)+(1.0-a)*eta_matrix(i,yi1))/2.0;
+            Real interpolated_from_eta = (a*eta_matrix(i,yi2)+(1.0-a)*eta_matrix(i,yi1))/2.0;
             state.B_vector(i) = state.Bext + interpolated_from_eta;
         });
 }

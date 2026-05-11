@@ -71,13 +71,13 @@ void step(SimulationState& state, SimulationParameters& p, ViewDoubleMatrixType 
 
 void calc_v(SimulationState& state, SimulationParameters& p) {
     
-    double total_sum = 0;
+    Real total_sum = 0;
     // Parallel reduce to calculate sum
-    Kokkos::parallel_reduce("sum", state.N, KOKKOS_LAMBDA(int i, double& lsum) {
+    Kokkos::parallel_reduce("sum", state.N, KOKKOS_LAMBDA(int i, Real& lsum) {
         lsum += state.dw(i).real();
     }, total_sum);
 
-    double mean = total_sum / state.N;
+    Real mean = total_sum / state.N;
     Kokkos::parallel_for("update", 1, KOKKOS_LAMBDA(int i) {
         state.v_mean_vector(state.v_idx) =
         (mean - state.old_position) / (p.dt * p.calc_v_frec);

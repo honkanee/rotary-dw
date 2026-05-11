@@ -5,8 +5,8 @@
 #include "state.h"
 
 // Physical constants
-const double gamma_e = 1.76e11;
-const double mu0 = 1.256637062e-6; // [H/m]
+const Real gamma_e = 1.76e11;
+const Real mu0 = 1.256637062e-6; // [H/m]
 
 
 SimulationParameters build_simulation_parameters(const InputParameters& in) {
@@ -14,7 +14,7 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
 
     p.alpha = in.alpha;
 
-    double D = sqrt(in.Aex / (in.Ku - 0.5 * mu0 * in.Ms * in.Ms));
+    Real D = sqrt(in.Aex / (in.Ku - 0.5 * mu0 * in.Ms * in.Ms));
 
     // Unit conversions to from SI to simulation units
     p.F = Complex(1.0,0) / ( Complex(in.alpha,0.0) + Complex(0.0,1.0));

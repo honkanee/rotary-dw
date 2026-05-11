@@ -9,6 +9,23 @@
 #include "state.h"
 
 
+template<typename T>
+struct H5Type;
+
+template<>
+struct H5Type<float> {
+    static H5::PredType type() {
+        return H5::PredType::NATIVE_FLOAT;
+    }
+};
+
+template<>
+struct H5Type<double> {
+    static H5::PredType type() {
+        return H5::PredType::NATIVE_DOUBLE;
+    }
+};
+
 // ----------------------
 // HDF5 writer
 // ----------------------

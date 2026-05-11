@@ -16,7 +16,7 @@
 
 
 KOKKOS_INLINE_FUNCTION
-Complex dzdx_at_i(const ViewComplexVectorType& z, int i, int N, double dx) {
+Complex dzdx_at_i(const ViewComplexVectorType& z, int i, int N, Real dx) {
     int ip = (i + 1) % N;
     int im = (i - 1 + N) % N;
 
@@ -24,7 +24,7 @@ Complex dzdx_at_i(const ViewComplexVectorType& z, int i, int N, double dx) {
 }
 
 KOKKOS_INLINE_FUNCTION
-Complex dzdx2_at_i(const ViewComplexVectorType& z, int i, int N, double dx) {
+Complex dzdx2_at_i(const ViewComplexVectorType& z, int i, int N, Real dx) {
     int ip = (i + 1) % N;
     int im = (i - 1 + N) % N;
 
@@ -36,8 +36,8 @@ Complex dzdt(ViewComplexVectorType z, const ViewDoubleVectorType B_vector, const
 
     Complex dzdx = dzdx_at_i(z,i,p.N,p.dx);
     Complex dzdx2 = dzdx2_at_i(z,i,p.N,p.dx);
-    double chi = Kokkos::atan(dzdx.real());
-    double phi_i = -z(i).imag();
+    Real chi = Kokkos::atan(dzdx.real());
+    Real phi_i = -z(i).imag();
     Complex dmi = Complex(0,0);
     if (p.dmi_const != 0) {
         dmi = p.dmi_const * (M_PI * (Kokkos::cos(phi_i) + Kokkos::sin(phi_i*dzdx.real()) - 2.0 * dzdx * Kokkos::cos(phi_i-chi)));

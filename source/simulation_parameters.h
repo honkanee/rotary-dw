@@ -9,36 +9,34 @@
 #include "state.h"
 #include "input_parameters.h"
 
-using Complex = Kokkos::complex<double>;
-
 // All parameters in converted units (except D, gamma & mu0)
 
 struct SimulationParameters {
-    double D = 0.0;
+    Real D = 0.0;
 
     // Material parameters
-    double alpha = 0.0;
-    double dmi_const = 0.0;
+    Real alpha = 0.0;
+    Real dmi_const = 0.0;
 
     // Derived parameters (computed in builder)
-    double K = 0;
+    Real K = 0;
     Complex F = Complex(0.0,0.0);
 
     // Spatial parameters
-    double dx = 0.0;
-    double xi = 0.0;
-    double Delta = 0.0;
-    double Nn = 0.0;
+    Real dx = 0.0;
+    Real xi = 0.0;
+    Real Delta = 0.0;
+    Real Nn = 0.0;
 
     // External fields, etc.
-    double Bext = 0.0;
-    double sigma = 0.0;
+    Real Bext = 0.0;
+    Real sigma = 0.0;
 
     // User defined parameters
     int N = 0;
     int nsteps = 0;
 
-    double dt = 0.0;
+    Real dt = 0.0;
     int calc_v_frec = 0;
 
     // Outputs
@@ -55,20 +53,20 @@ struct SimulationParameters {
     bool file_partioning = false;
 
     // ===== Public read-only accessors =====
-    double dx_SI() const { return dx * D_scale; }
-    double dt_SI() const { return dt * time_scale(); }
-    double Bext_SI() const { return Bext * field_scale(); }
-    double sigma_SI() const { return sigma * field_scale(); }
-    double dmi_const_SI() const { return dmi_const * (Ms*Ms*mu0*D_scale); }
+    Real dx_SI() const { return dx * D_scale; }
+    Real dt_SI() const { return dt * time_scale(); }
+    Real Bext_SI() const { return Bext * field_scale(); }
+    Real sigma_SI() const { return sigma * field_scale(); }
+    Real dmi_const_SI() const { return dmi_const * (Ms*Ms*mu0*D_scale); }
 
     // ===== Scaling helpers =====
-    double length_scale() const { return D_scale; }
-    double time_scale() const { return 1.0 / (gamma_e * mu0 * Ms); }
-    double field_scale() const { return mu0 * Ms; }
+    Real length_scale() const { return D_scale; }
+    Real time_scale() const { return 1.0 / (gamma_e * mu0 * Ms); }
+    Real field_scale() const { return mu0 * Ms; }
 
     void print_SI() const {
-    constexpr double gamma_e = 1.76e11;
-    constexpr double mu0 = 1.256637062e-6;
+    constexpr Real gamma_e = 1.76e11;
+    constexpr Real mu0 = 1.256637062e-6;
 
     std::cout << "===== Simulation Parameters (SI units) =====\n";
 
@@ -79,7 +77,7 @@ struct SimulationParameters {
     std::cout << "  -> t: " << nsteps*dt*time_scale()*1e6 << " µs\n";
 
     // Field
-    double field_scale = mu0 * Ms;
+    Real field_scale = mu0 * Ms;
     std::cout << "Bext (T): " << Bext * field_scale << "\n";
     std::cout << "sigma (T): " << sigma * field_scale << "\n";
 
@@ -99,7 +97,7 @@ struct SimulationParameters {
     std::cout << "xi (m): " << xi * D_scale << "\n";
 
     // Time
-    double time_scale = 1.0 / (gamma_e * mu0 * Ms);
+    Real time_scale = 1.0 / (gamma_e * mu0 * Ms);
     std::cout << "dt (s): " << dt * time_scale << "\n";
 
     // Dimensionless (still useful to see)
@@ -120,10 +118,10 @@ struct SimulationParameters {
 
 private:
     // ===== Hidden =====
-    double Ms;
-    double D_scale;
+    Real Ms;
+    Real D_scale;
 
-    static constexpr double gamma_e = 1.76e11;
+    static constexpr Real gamma_e = 1.76e11;
     static constexpr double mu0 = 1.256637062e-6;
 
     // Only builder can set these
