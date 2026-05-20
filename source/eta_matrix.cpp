@@ -199,7 +199,7 @@ void update_B_vector(const ViewDoubleMatrixType eta_matrix,
             Real a = y - int(y);
             int yi1 = int(y)%eta_matrix.extent(1);
             int yi2 = (int(y)+1)%eta_matrix.extent(1);
-            Real interpolated_from_eta = (a*eta_matrix(i,yi2)+(1.0-a)*eta_matrix(i,yi1))/2.0;
+            Real interpolated_from_eta = a*eta_matrix(i,yi2)+(1.0-a)*eta_matrix(i,yi1);
             state.B_vector(i) = state.Bext + interpolated_from_eta;
         });
 }
