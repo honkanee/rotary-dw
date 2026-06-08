@@ -39,6 +39,8 @@ struct SimulationParameters {
     Real dt = 0.0;
     int calc_v_frec = 0;
 
+    Real start_with_noise = 0;
+
     // Outputs
     int print_frec = 0;
     unsigned long long resolution_along_x = 0;
@@ -112,6 +114,7 @@ struct SimulationParameters {
     std::cout << "write_eta_to_file: " << write_eta_to_file << "\n";
 
     std::cout << "ramped_field: " << ramped_field << "\n";
+    std::cout << "start_with_noise: " << start_with_noise << "\n";
 
     std::cout << "===========================================\n";
 };

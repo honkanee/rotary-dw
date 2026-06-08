@@ -97,6 +97,7 @@ InputParameters parse_input(const std::string& filename) {
             else if (key == "n_y_eta") ss >> p.n_y_eta;
             else if (key == "random_seed") ss >> p.random_seed;
             else if (key == "calc_v_frec") ss >> p.calc_v_frec;
+            else if (key == "start_with_noise") ss >> p.start_with_noise;
 
             // Mark parameter as found
             found_keys.insert(key);

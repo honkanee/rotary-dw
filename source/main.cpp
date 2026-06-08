@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     Kokkos::initialize(argc, argv);
     {
 
-    SimulationState state = SimulationState(p.N, p.Bext, int(p.print_frec/p.calc_v_frec));
+    SimulationState state = SimulationState(p.N, p.Bext, int(p.print_frec/p.calc_v_frec), p.start_with_noise);
     std::string out_dir = "./out/";
     if (!std::filesystem::exists(out_dir)) {
     std::filesystem::create_directories(out_dir);

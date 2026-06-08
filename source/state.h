@@ -30,7 +30,7 @@ struct SimulationState {
     Real old_position;
     int v_idx;
 
-    SimulationState(int N_, Real Bext, int dim_v);
+    SimulationState(int N_, Real Bext, int dim_v, Real start_with_noise);
 };
 
 
