@@ -40,7 +40,7 @@ Complex dzdt(ViewComplexVectorType z, const ViewDoubleVectorType B_vector, const
     Real phi_i = -z(i).imag();
     Complex dmi = Complex(0,0);
     if (p.dmi_const != 0) {
-        dmi =  p.dmi_const * M_PI * 0.5 * (Complex(0.0,1.0) * (Kokkos::cos(phi_i) + Kokkos::sin(phi_i*dzdx.real())) + Complex(1.0,0.0) * (dzdx.imag() * Kokkos::sin(phi_i)));
+        dmi =  p.dmi_const * M_PI * 0.5 * (Complex(0.0,1.0) * (Kokkos::cos(phi_i) + Kokkos::sin(phi_i)*dzdx.real()) + Complex(1.0,0.0) * (dzdx.imag() * Kokkos::sin(phi_i)));
     }
 
     return p.F*(p.K*dzdx2 - B_vector(i) + 0.5*p.Nn*Complex(0.0,1.0)*Kokkos::sin(2*(phi_i- chi)) + dmi);
