@@ -40,6 +40,7 @@ struct SimulationParameters {
     int calc_v_frec = 0;
 
     Real start_with_noise = 0;
+    bool include_first_order = false;
 
     // Outputs
     int print_frec = 0;
@@ -115,6 +116,7 @@ struct SimulationParameters {
 
     std::cout << "ramped_field: " << ramped_field << "\n";
     std::cout << "start_with_noise: " << start_with_noise << "\n";
+    std::cout << "include_first_order: " << include_first_order << "\n";
 
     std::cout << "===========================================\n";
 };

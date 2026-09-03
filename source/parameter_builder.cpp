@@ -35,6 +35,7 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
     p.resolution_along_x = in.resolution_along_x;
     p.calc_v_frec = in.calc_v_frec;
     p.start_with_noise = in.start_with_noise;
+    p.include_first_order = in.include_first_order;
 
     p.ramped_field = in.ramped_field;
 

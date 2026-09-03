@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <iomanip>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Complex.hpp>
@@ -38,12 +39,21 @@ Complex dzdt(ViewComplexVectorType z, const ViewDoubleVectorType B_vector, const
     Complex dzdx2 = dzdx2_at_i(z,i,p.N,p.dx);
     Real chi = Kokkos::atan(dzdx.real());
     Real phi_i = -z(i).imag();
+    Real h_d = dzdx.real();
+    Real phi_d = -dzdx.imag();
+    Real h_dd = dzdx2.real();
     Complex dmi = Complex(0,0);
+    Complex demag_term = Complex(0,0);
     if (p.dmi_const != 0) {
-        dmi =  p.dmi_const * M_PI * 0.5 * (Complex(0.0,1.0) * (Kokkos::cos(phi_i) + Kokkos::sin(phi_i)*dzdx.real()) + Complex(1.0,0.0) * (dzdx.imag() * Kokkos::sin(phi_i)));
+        dmi =  p.dmi_const * M_PI * 0.5 * (Complex(0.0,1.0) * (Kokkos::cos(phi_i) + Kokkos::sin(phi_i)*dzdx.real()) + Complex(1.0,0.0) * (phi_d * Kokkos::sin(phi_i)));
     }
-
-    return p.F*(p.K*dzdx2 - B_vector(i) + 0.5*p.Nn*Complex(0.0,1.0)*Kokkos::sin(2*(phi_i- chi)) + dmi);
+    if (p.include_first_order) {
+        demag_term = Complex(0.0,1.0) * (0.5*p.Nn * (Kokkos::sin(2.0*phi_i) - 2.0*h_d*Kokkos::cos(2.0*phi_i)))
+        + Complex(1.0,0.0) * (p.Nn * ((phi_d - h_dd)*Kokkos::cos(2.0*phi_i) + 2.0*h_d*phi_d*Kokkos::sin(2.0*phi_i)));
+    } else {
+        demag_term = 0.5*p.Nn*Complex(0.0,1.0)*Kokkos::sin(2*(phi_i- chi));
+    }
+    return p.F*(p.K*dzdx2 - B_vector(i) - dmi + demag_term);
 }
 
 // ----------------------

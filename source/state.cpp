@@ -6,7 +6,7 @@
 #include <Kokkos_Complex.hpp>
 
 
-SimulationState::SimulationState(int N_, Real Bext_, int dim_v, Real start_with_noise)
+SimulationState::SimulationState(int N_, Real Bext_, int dim_v, Real start_with_noise, bool include_first_order)
     : N(N_), dw("dw", N_), B_vector("B_vector", N_), Bext(Bext_), old_position(0.0), v_mean_vector("v_mean", dim_v), v_idx(0)
     {
         if (start_with_noise > 0) {
