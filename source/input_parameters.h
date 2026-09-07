@@ -23,6 +23,7 @@ struct InputParameters {
     
     Real sigma = 0.0;
     Real start_with_noise = 0;
+    bool include_first_order = false;
 
     int calc_v_frec = 100;
 
