@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
     {
 
     SimulationState state = SimulationState(p.N, p.Bext, int(p.print_frec/p.calc_v_frec), p.start_with_noise,p.include_first_order);
+
     std::string out_dir = "./out/";
     if (!std::filesystem::exists(out_dir)) {
     std::filesystem::create_directories(out_dir);
@@ -36,8 +37,19 @@ int main(int argc, char* argv[])
 
     ViewDoubleMatrixType eta_matrix = make_eta_matrix(p);
 
+    Real relaxation_time = 0.0;
+
+    state.Bext = 0;
+    for (int step_idx=0; step_idx<p.nsteps_relax;++step_idx) {
+        auto t0 = high_res_clock::now();
+        step(state,p,eta_matrix);
+        auto t1 = high_res_clock::now();
+        relaxation_time += std::chrono::duration<Real>(t1 - t0).count();
+    }
+
     Real compute_time = 0.0;
     Real io_time = 0.0;
+    state.Bext = p.Bext;
 
     for (int step_idx = 0; step_idx < p.nsteps; ++step_idx) {
         auto t0 = high_res_clock::now();
@@ -65,12 +77,13 @@ int main(int argc, char* argv[])
     }
     writer.close();
     
+    std::cout << "Relaxation time: " << relaxation_time << " s\n";
     std::cout << "Compute time: " << compute_time << " s\n";
     std::cout << "I/O time:     " << io_time << " s\n";
-    std::cout << "Total time:   " << compute_time + io_time << " s\n";
+    std::cout << "Total time:   " << compute_time + io_time + relaxation_time << " s\n";
 
     std::cout << "I/O fraction: "
-        << io_time / (compute_time + io_time) * 100.0
+        << io_time / (compute_time + io_time + relaxation_time) * 100.0
         << " %\n";
     
     }

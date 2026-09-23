@@ -31,6 +31,7 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
     // Copy simple values
     p.N = in.N;
     p.nsteps = in.nsteps;
+    p.nsteps_relax = in.nsteps_relax;
     p.print_frec = in.print_frec;
     p.resolution_along_x = in.resolution_along_x;
     p.calc_v_frec = in.calc_v_frec;

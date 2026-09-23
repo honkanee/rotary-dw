@@ -35,6 +35,7 @@ struct SimulationParameters {
     // User defined parameters
     int N = 0;
     int nsteps = 0;
+    int nsteps_relax = 0;
 
     Real dt = 0.0;
     int calc_v_frec = 0;
@@ -78,6 +79,8 @@ struct SimulationParameters {
     std::cout << "  -> L: " << N*dx*D_scale*1e6 << " µm\n";
     std::cout << "nsteps: " << nsteps << "\n";
     std::cout << "  -> t: " << nsteps*dt*time_scale()*1e6 << " µs\n";
+    std::cout << "nsteps_relax: " << nsteps_relax << "\n";
+    std::cout << "  -> t: " << nsteps_relax*dt*time_scale()*1e6 << " µs\n";
 
     // Field
     Real field_scale = mu0 * Ms;

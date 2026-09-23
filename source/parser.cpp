@@ -21,6 +21,7 @@ bool to_bool(const std::string& val) {
 std::vector<std::string> required_keys = {
     "N",
     "nsteps",
+    "steps_relax",
     "B_ext",
     "dmi_const",
     "dx",
@@ -80,6 +81,7 @@ InputParameters parse_input(const std::string& filename) {
 
             if (key == "N") ss >> p.N;
             else if (key == "nsteps") ss >> p.nsteps;
+            else if (key == "nsteps_relax") ss >> p.nsteps_relax;
             else if (key == "B_ext") ss >> p.B_ext;
             else if (key == "dmi_const") ss >> p.dmi_const;
             else if (key == "dx") ss >> p.dx;

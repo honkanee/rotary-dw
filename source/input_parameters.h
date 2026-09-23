@@ -8,6 +8,7 @@
 struct InputParameters {
     int N = 0;
     int nsteps = 0;
+    int nsteps_relax = 0;
     Real B_ext = 0.0;
     Real dmi_const = 0.0;
 
