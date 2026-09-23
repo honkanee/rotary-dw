@@ -21,7 +21,7 @@ bool to_bool(const std::string& val) {
 std::vector<std::string> required_keys = {
     "N",
     "nsteps",
-    "steps_relax",
+    "nsteps_relax",
     "B_ext",
     "dmi_const",
     "dx",
