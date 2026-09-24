@@ -101,7 +101,9 @@ InputParameters parse_input(const std::string& filename) {
             else if (key == "calc_v_frec") ss >> p.calc_v_frec;
             else if (key == "start_with_noise") ss >> p.start_with_noise;
             else if (key=="include_first_order") p.include_first_order = to_bool(value);
-
+            else if (key=="Bext_step") ss >> p.Bext_step;
+            else if (key=="Bext_end") ss >> p.Bext_end;
+            else if (key=="nsteps_at_ramp") ss >> p.nsteps_at_ramp;
             // Mark parameter as found
             found_keys.insert(key);
         } else {

@@ -43,6 +43,10 @@ struct SimulationParameters {
     Real start_with_noise = 0;
     bool include_first_order = false;
 
+    Real Bext_step = 0.0;
+    Real Bext_end = 0.0;
+    int nsteps_at_ramp = 0;
+
     // Outputs
     int print_frec = 0;
     unsigned long long resolution_along_x = 0;
@@ -62,6 +66,8 @@ struct SimulationParameters {
     Real Bext_SI() const { return Bext * field_scale(); }
     Real sigma_SI() const { return sigma * field_scale(); }
     Real dmi_const_SI() const { return dmi_const * (Ms*Ms*mu0*D_scale); }
+    //Real Bext_max_SI() const { return Bext_max * field_scale(); }
+    //Real ramp_SI() const { return ramp_rate * field_scale(); }
 
     // ===== Scaling helpers =====
     Real length_scale() const { return D_scale; }
@@ -81,10 +87,14 @@ struct SimulationParameters {
     std::cout << "  -> t: " << nsteps*dt*time_scale()*1e6 << " µs\n";
     std::cout << "nsteps_relax: " << nsteps_relax << "\n";
     std::cout << "  -> t: " << nsteps_relax*dt*time_scale()*1e6 << " µs\n";
+    std::cout << "nsteps_at_ramp: " << nsteps_at_ramp << "\n";
+    std::cout << "  -> t: " << nsteps_at_ramp*dt*time_scale()*1e6 << " µs\n";
 
     // Field
     Real field_scale = mu0 * Ms;
     std::cout << "Bext (T): " << Bext * field_scale << "\n";
+    std::cout << "Bext_end (T): " << Bext_end * field_scale << "\n";
+    std::cout << "Bext_step (T): " << Bext_step * field_scale << "\n";
     std::cout << "sigma (T): " << sigma * field_scale << "\n";
 
     std::cout << "print_frec: " << print_frec << "\n";

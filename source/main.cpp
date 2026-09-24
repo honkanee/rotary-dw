@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <filesystem>
+#include <sstream>
+#include <cmath>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Complex.hpp>
@@ -28,17 +30,11 @@ int main(int argc, char* argv[])
 
     SimulationState state = SimulationState(p.N, p.Bext, int(p.print_frec/p.calc_v_frec), p.start_with_noise,p.include_first_order);
 
-    std::string out_dir = "./out/";
-    if (!std::filesystem::exists(out_dir)) {
-    std::filesystem::create_directories(out_dir);
-    }
-    HDF5Writer writer(state, p, out_dir);
-    writer.make_output_file();
-
     ViewDoubleMatrixType eta_matrix = make_eta_matrix(p);
 
     Real relaxation_time = 0.0;
 
+    //initial relaxation period
     state.Bext = 0;
     for (int step_idx=0; step_idx<p.nsteps_relax;++step_idx) {
         auto t0 = high_res_clock::now();
@@ -49,33 +45,56 @@ int main(int argc, char* argv[])
 
     Real compute_time = 0.0;
     Real io_time = 0.0;
-    state.Bext = p.Bext;
 
-    for (int step_idx = 0; step_idx < p.nsteps; ++step_idx) {
-        auto t0 = high_res_clock::now();
-        step(state, p, eta_matrix);
+    state.Bext = p.Bext; //put driving field on
 
-        if (step_idx % p.calc_v_frec == 0) {
-            calc_v(state, p);
-        }
-        auto t1 = high_res_clock::now();
-        compute_time += std::chrono::duration<Real>(t1 - t0).count();
-
-        if (step_idx % p.print_frec == 0) {
-            auto t_io0 = high_res_clock::now();
-            writer.write(step_idx);
-            Kokkos::fence();
-            state.v_idx = 0;
-
-            auto t_io1 = high_res_clock::now();
-            io_time += std::chrono::duration<Real>(t_io1 - t_io0).count();
+    while (std::fabs(state.Bext)<=std::fabs(p.Bext_end)) {
+        std::ostringstream ss;
+        ss << std::fixed << std::setprecision(5) << std::abs(p.Bext_SI());
+        std::string out_dir = "./out/Bext_" + ss.str() + "/";
+        if (!std::filesystem::exists(out_dir)) {
+            std::filesystem::create_directories(out_dir);
         }
 
-        if (step_idx*10 % p.nsteps == 0) {
-            std::cout << round(100*step_idx / p.nsteps) << " %\n";
+        HDF5Writer writer(state, p, out_dir);
+        writer.make_output_file();
+
+        std::cout << p.Bext_SI() << ":\n";
+
+        for (int step_idx = 0; step_idx < p.nsteps_at_ramp; ++step_idx) {
+            auto t0 = high_res_clock::now();
+            step(state, p, eta_matrix);
+
+            if (step_idx % p.calc_v_frec == 0) {
+                calc_v(state, p);
+            }
+
+            auto t1 = high_res_clock::now();
+            compute_time += std::chrono::duration<Real>(t1 - t0).count();
+
+            if (step_idx % p.print_frec == 0) {
+                auto t_io0 = high_res_clock::now();
+                writer.write(step_idx);
+                Kokkos::fence();
+                state.v_idx = 0;
+
+                auto t_io1 = high_res_clock::now();
+                io_time += std::chrono::duration<Real>(t_io1 - t_io0).count();
+            }
+
+            if (step_idx*10 % p.nsteps_at_ramp == 0) {
+                std::cout << round(100*step_idx / p.nsteps_at_ramp) << " %\n";
+            }
+
         }
+        
+        writer.close();
+        if (!p.ramped_field) {
+            break;
+        }
+        p.Bext += p.Bext_step;
+        state.Bext = p.Bext;
     }
-    writer.close();
     
     std::cout << "Relaxation time: " << relaxation_time << " s\n";
     std::cout << "Compute time: " << compute_time << " s\n";

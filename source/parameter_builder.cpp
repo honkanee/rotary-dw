@@ -1,5 +1,4 @@
 #include <Kokkos_Complex.hpp> 
-
 #include "parameter_builder.h"
 #include "input_parameters.h"
 #include "state.h"
@@ -28,6 +27,25 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
     p.dmi_const = in.dmi_const / (in.Ms * in.Ms * mu0 * D);
     p.dt = in.dt * 1e-9 * gamma_e * mu0 * in.Ms;
 
+    /*
+    Handle ramp behavior. Ramped version is on if
+        - ramped_field=true
+        - Bext for the first and last simulation are on the right order
+        - Bext step is nonzero
+    */
+    if (!in.ramped_field || std::fabs(in.B_ext)>=std::fabs(in.Bext_end) || in.Bext_step==0 
+            || std::fabs(in.B_ext+in.Bext_step-in.Bext_end)>std::fabs(in.B_ext-in.Bext_end)) {
+        p.Bext_step = 0.0;
+        p.Bext_end = p.Bext;
+        p.nsteps_at_ramp = in.nsteps;
+        p.ramped_field = false;
+    } else {
+        p.Bext_step = in.Bext_step * 1e-3 / (mu0 * in.Ms);
+        p.Bext_end = in.Bext_end * 1e-3 / (mu0 * in.Ms);
+        p.nsteps_at_ramp = in.nsteps_at_ramp;
+        p.ramped_field = in.ramped_field;
+    }
+    
     // Copy simple values
     p.N = in.N;
     p.nsteps = in.nsteps;
@@ -37,9 +55,6 @@ SimulationParameters build_simulation_parameters(const InputParameters& in) {
     p.calc_v_frec = in.calc_v_frec;
     p.start_with_noise = in.start_with_noise;
     p.include_first_order = in.include_first_order;
-
-    p.ramped_field = in.ramped_field;
-
     p.n_y_eta = in.n_y_eta;
     p.write_eta_to_file = in.write_eta_to_file;
     p.random_seed = in.random_seed;

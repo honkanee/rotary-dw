@@ -28,6 +28,11 @@ struct InputParameters {
 
     int calc_v_frec = 100;
 
+    // Ramp parameters
+    Real Bext_step = 0.0;
+    Real Bext_end = 0.0;
+    int nsteps_at_ramp = 0;
+
     // Output
     int print_frec = 0;
     int resolution_along_x = 0;
